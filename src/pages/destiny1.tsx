@@ -8,7 +8,7 @@ export function destiny1PGCR(props: { pgcrId: string }) {
         {
             method: "GET",
             headers: {
-                "X-API-Key": "eabcb2493f264f459442c82fa61a791c",
+                "X-API-Key": import.meta.env.VITE_BUNGIE_API_KEY,
                 "Content-Type": "application/json",
             },
         }
