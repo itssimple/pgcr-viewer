@@ -6,6 +6,7 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
     const [pgcrData, setPgcrData] = useState<any>(null);
     const [pgcrPeriod, setPgcrPeriod] = useState<any>(null);
     const [pgcrActivity, setPgcrActivity] = useState<any>(null);
+    const [pgcrActivityType, setPgcrActivityType] = useState<any>(null);
 
     useEffect(() => {
         async function fetchPGCR() {
@@ -56,6 +57,23 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
 
                     const activityData = await activityResp.json();
                     setPgcrActivity(activityData);
+
+                    const activityTypeResp = await fetch(
+                        `https://www.bungie.net/d1/Platform/Destiny/Manifest/ActivityType/${
+                            activityDetails.activityTypeHashOverride
+                        }/?_cache=${new Date().getTime()}`,
+                        {
+                            method: "GET",
+                            headers: {
+                                "X-API-Key": import.meta.env
+                                    .VITE_BUNGIE_API_KEY,
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+
+                    const activityTypeData = await activityTypeResp.json();
+                    setPgcrActivityType(activityTypeData);
                 }
 
                 if (data.entries) {
@@ -72,58 +90,67 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
             <h1 class="text-xl">Destiny 1 PGCR: {pgcrId}</h1>
             {pgcrData != null && (
                 <>
-                    <div class="bg-gray-900 text-white p-4 rounded mt-5 mb-2">
-                        <h2 class="text-xl">
-                            {pgcrActivity && (
-                                <>
-                                    {
-                                        pgcrActivity.Response.data.activity
-                                            .activityName
-                                    }
-                                </>
-                            )}
-                        </h2>
-                        <em>
-                            {pgcrActivity && (
-                                <>
-                                    {
-                                        pgcrActivity.Response.data.activity
-                                            .activityDescription
-                                    }
-                                </>
-                            )}
-                        </em>
-                        {pgcrPeriod && (
-                            <p>
-                                Timestamp:{" "}
-                                {new Date(pgcrPeriod).toLocaleDateString(
-                                    "sv-SE",
-                                    {
-                                        year: "numeric",
-                                        month: "2-digit",
-                                        day: "2-digit",
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                        second: "2-digit",
-                                    }
+                    <div
+                        id="pgcr-data"
+                        class="bg-gray-900 text-white p-0 rounded mt-5 mb-2 relative flex items-end content-end"
+                    >
+                        <div
+                            class="top-0 left-0 right-0 bottom-0 bg-cover bg-no-repeat absolute max-h[none]"
+                            style={`background-image: url(https://www.bungie.net${pgcrActivity.Response.data.activity.pgcrImage});`}
+                        ></div>
+                        <div class="relative bg-linear-to-tr from-black/90 to-black/0 text-left p-5 w-full pt-25">
+                            <div class="">
+                                <div
+                                    class="w-16 h-16 bg-cover bg-no-repeat"
+                                    style={`background-image: url(https://www.bungie.net${pgcrActivity.Response.data.activity.icon});`}
+                                ></div>
+                            </div>
+                            <div class="text-5xl font-bold">
+                                {pgcrActivityType && (
+                                    <>
+                                        {
+                                            pgcrActivityType.Response.data
+                                                .activityType.activityTypeName
+                                        }
+                                    </>
                                 )}
-                            </p>
-                        )}
-                        <p>
-                            Activity ID:{" "}
-                            {pgcrData.Response.data.activityDetails.instanceId}
-                        </p>
-                        <p>
-                            Activity Type:{" "}
-                            {
-                                pgcrData.Response.data.activityDetails
-                                    .activityTypeHashOverride
-                            }
-                        </p>
-                        <p>
-                            Activity Mode:{" "}
-                            {pgcrData.Response.data.activityDetails.mode}
-                        </p>
+                            </div>
+                            <div class="text-3xl mt-2">
+                                {pgcrActivity && (
+                                    <>
+                                        {
+                                            pgcrActivity.Response.data.activity
+                                                .activityName
+                                        }
+                                    </>
+                                )}
+                            </div>
+                            <em>
+                                {pgcrActivity && (
+                                    <>
+                                        {
+                                            pgcrActivity.Response.data.activity
+                                                .activityDescription
+                                        }
+                                    </>
+                                )}
+                            </em>
+                            {pgcrPeriod && (
+                                <p>
+                                    {new Date(pgcrPeriod).toLocaleDateString(
+                                        "sv-SE",
+                                        {
+                                            year: "numeric",
+                                            month: "2-digit",
+                                            day: "2-digit",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            second: "2-digit",
+                                        }
+                                    )}
+                                </p>
+                            )}
+                        </div>
                     </div>
                 </>
             )}
