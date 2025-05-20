@@ -77,6 +77,7 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                 }
 
                 if (data.entries) {
+                    console.log("PGCR Entries: ", data.entries);
                 }
 
                 if (data.teams) {
@@ -96,13 +97,19 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                     >
                         <div
                             class="top-0 left-0 right-0 bottom-0 bg-cover bg-no-repeat absolute max-h[none]"
-                            style={`background-image: url(https://www.bungie.net${pgcrActivity.Response.data.activity.pgcrImage});`}
+                            style={
+                                pgcrActivity &&
+                                `background-image: url(https://www.bungie.net${pgcrActivity.Response.data.activity.pgcrImage});`
+                            }
                         ></div>
                         <div class="relative bg-linear-to-tr from-black/90 to-black/0 text-left p-5 w-full pt-25">
                             <div class="">
                                 <div
                                     class="w-16 h-16 bg-cover bg-no-repeat"
-                                    style={`background-image: url(https://www.bungie.net${pgcrActivity.Response.data.activity.icon});`}
+                                    style={
+                                        pgcrActivity &&
+                                        `background-image: url(https://www.bungie.net${pgcrActivity.Response.data.activity.icon});`
+                                    }
                                 ></div>
                             </div>
                             <div class="text-5xl font-bold">
@@ -152,6 +159,61 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                             )}
                         </div>
                     </div>
+                    {pgcrData && pgcrData.Response.data.entries && (
+                        <div>
+                            {pgcrData.Response.data.entries.map(
+                                (entry: any, index: number) => {
+                                    const player = entry.player;
+                                    const playerData =
+                                        pgcrData.Response.data.entries[index];
+                                    return (
+                                        <div
+                                            key={index}
+                                            class="bg-gray-900 text-white p-2 rounded mt-2 mb-2 flex flex-col items-start"
+                                        >
+                                            <div class="text-2xl font-bold">
+                                                {
+                                                    player.destinyUserInfo
+                                                        .displayName
+                                                }{" "}
+                                                ({player.characterClass}, lvl.{" "}
+                                                {player.characterLevel}, light
+                                                lvl. {player.lightLevel}){" "}
+                                                <small>
+                                                    <em>
+                                                        duration:{" "}
+                                                        {
+                                                            playerData.values
+                                                                .activityDurationSeconds
+                                                                .basic
+                                                                .displayValue
+                                                        }
+                                                    </em>
+                                                </small>
+                                            </div>
+
+                                            <div class="">
+                                                <pre class="bg-gray-900 text-white p-4 rounded text-left">
+                                                    <code
+                                                        id="json"
+                                                        class="whitespace-pre-wrap"
+                                                    >
+                                                        {entry == null
+                                                            ? "Loading PGCR data"
+                                                            : JSON.stringify(
+                                                                  entry,
+                                                                  null,
+                                                                  2
+                                                              )}
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                            )}
+                        </div>
+                    )}
                 </>
             )}
             <pre class="bg-gray-900 text-white p-4 rounded text-left">
