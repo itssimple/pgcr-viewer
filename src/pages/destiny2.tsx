@@ -7,6 +7,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
     const [pgcrPeriod, setPgcrPeriod] = useState<any>(null);
     const [pgcrActivity, setPgcrActivity] = useState<any>(null);
     const [pgcrActivityType, setPgcrActivityType] = useState<any>(null);
+    const [pgcrActivityMode, setPgcrActivityMode] = useState<any>(null);
 
     useEffect(() => {
         async function fetchPGCR() {
@@ -69,6 +70,22 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
 
                 const activityTypeData = await activityTypeResp.json();
                 setPgcrActivityType(activityTypeData);
+
+                const activityModeResp = await fetch(
+                    `https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityModeDefinition/${
+                        activityData.Response.activityTypeHash
+                    }/?_cache=${new Date().getTime()}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "X-API-Key": import.meta.env.VITE_BUNGIE_API_KEY,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                const activityModeData = await activityModeResp.json();
+                setPgcrActivityMode(activityModeData);
             }
 
             if (data.teams && data.teams.length > 0) {
@@ -98,8 +115,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                 <div
                                     class="w-16 h-16 bg-cover bg-no-repeat"
                                     style={
-                                        pgcrActivity &&
-                                        `background-image: url(https://www.bungie.net${pgcrActivity.Response.displayProperties.icon});`
+                                        pgcrActivityMode &&
+                                        `background-image: url(https://www.bungie.net${pgcrActivityMode.Response.displayProperties.icon});`
                                     }
                                 ></div>
                             </div>
