@@ -6,4 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
     base: "/",
     plugins: [preact(), tailwindcss()],
+    server: {
+        port: 5173,
+    },
 });
