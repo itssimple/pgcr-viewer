@@ -5,7 +5,7 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
 
     const [pgcrData, setPgcrData] = useState<any>(null);
     const [pgcrPeriod, setPgcrPeriod] = useState<any>(null);
-    const [pgcrActivityType, setPgcrActivityType] = useState<any>(null);
+    const [pgcrActivity, setPgcrActivity] = useState<any>(null);
 
     useEffect(() => {
         async function fetchPGCR() {
@@ -40,9 +40,9 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                 if (data.activityDetails) {
                     const activityDetails = data.activityDetails;
 
-                    const activityTypeResp = await fetch(
-                        `https://www.bungie.net/d1/Platform/Destiny/Manifest/ActivityType/${
-                            activityDetails.activityTypeHashOverride
+                    const activityResp = await fetch(
+                        `https://www.bungie.net/d1/Platform/Destiny/Manifest/Activity/${
+                            activityDetails.referenceId
                         }/?_cache=${new Date().getTime()}`,
                         {
                             method: "GET",
@@ -54,8 +54,8 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                         }
                     );
 
-                    const activityTypeData = await activityTypeResp.json();
-                    setPgcrActivityType(activityTypeData);
+                    const activityData = await activityResp.json();
+                    setPgcrActivity(activityData);
                 }
 
                 if (data.entries) {
@@ -74,22 +74,21 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                 <>
                     <div class="bg-gray-900 text-white p-4 rounded mt-5 mb-2">
                         <h2 class="text-xl">
-                            {pgcrActivityType && (
+                            {pgcrActivity && (
                                 <>
                                     {
-                                        pgcrActivityType.Response.data
-                                            .activityType.activityTypeName
+                                        pgcrActivity.Response.data.activity
+                                            .activityName
                                     }
                                 </>
                             )}
                         </h2>
                         <em>
-                            {pgcrActivityType && (
+                            {pgcrActivity && (
                                 <>
                                     {
-                                        pgcrActivityType.Response.data
-                                            .activityType
-                                            .activityTypeDescription
+                                        pgcrActivity.Response.data.activity
+                                            .activityDescription
                                     }
                                 </>
                             )}
