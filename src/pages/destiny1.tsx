@@ -76,11 +76,8 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                     setPgcrActivityType(activityTypeData);
                 }
 
-                if (data.entries) {
-                    console.log("PGCR Entries: ", data.entries);
-                }
-
-                if (data.teams) {
+                if (data.teams && data.teams.length > 0) {
+                    console.log(data.teams);
                 }
             }
         }
@@ -176,9 +173,14 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                                                     player.destinyUserInfo
                                                         .displayName
                                                 }{" "}
-                                                ({player.characterClass}, lvl.{" "}
-                                                {player.characterLevel}, light
-                                                lvl. {player.lightLevel}){" "}
+                                                (
+                                                {player.characterClass ? (
+                                                    player.characterClass
+                                                ) : (
+                                                    <em>Unknown</em>
+                                                )}
+                                                , lvl. {player.characterLevel},
+                                                light lvl. {player.lightLevel}){" "}
                                                 <small>
                                                     <em>
                                                         duration:{" "}
@@ -191,23 +193,49 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                                                     </em>
                                                 </small>
                                             </div>
-
-                                            <div class="">
-                                                <pre class="bg-gray-900 text-white p-4 rounded text-left">
-                                                    <code
-                                                        id="json"
-                                                        class="whitespace-pre-wrap"
-                                                    >
-                                                        {entry == null
-                                                            ? "Loading PGCR data"
-                                                            : JSON.stringify(
-                                                                  entry,
-                                                                  null,
-                                                                  2
-                                                              )}
-                                                    </code>
-                                                </pre>
-                                            </div>
+                                            <table class="table-auto w-full mt-2 mb-2">
+                                                <thead class="text-xs text-gray-400 uppercase bg-gray-700">
+                                                    <tr>
+                                                        <th class="text-left px-6 py-3">
+                                                            Stat
+                                                        </th>
+                                                        <th class="text-right px-6 py-3">
+                                                            Value
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {Object.entries(
+                                                        playerData.values
+                                                    ).map(
+                                                        (
+                                                            [key, value]: [
+                                                                string,
+                                                                any
+                                                            ],
+                                                            index
+                                                        ) => {
+                                                            return (
+                                                                <tr
+                                                                    key={index}
+                                                                    class="odd:bg-gray-900 even:bg-gray-800"
+                                                                >
+                                                                    <td class="text-left  px-6 py-3">
+                                                                        {key}
+                                                                    </td>
+                                                                    <td class="text-right px-6 py-3">
+                                                                        {
+                                                                            value
+                                                                                .basic
+                                                                                .displayValue
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        }
+                                                    )}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     );
                                 }
@@ -216,13 +244,6 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                     )}
                 </>
             )}
-            <pre class="bg-gray-900 text-white p-4 rounded text-left">
-                <code id="json" class="whitespace-pre-wrap">
-                    {pgcrData == null
-                        ? "Loading PGCR data"
-                        : JSON.stringify(pgcrData, null, 2)}
-                </code>
-            </pre>
         </div>
     );
 }
