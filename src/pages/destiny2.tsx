@@ -145,7 +145,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                     <>
                                         {
                                             pgcrActivity.Response
-                                                .displayProperties.descroåtopm
+                                                .displayProperties.description
                                         }
                                     </>
                                 )}
@@ -182,8 +182,15 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                             <div class="text-2xl font-bold">
                                                 {
                                                     player.destinyUserInfo
-                                                        .displayName
-                                                }{" "}
+                                                        .bungieGlobalDisplayName
+                                                }
+                                                <span class="text-gray-400">
+                                                    {"#"}
+                                                    {
+                                                        player.destinyUserInfo
+                                                            .bungieGlobalDisplayNameCode
+                                                    }
+                                                </span>{" "}
                                                 (
                                                 {player.characterClass ? (
                                                     player.characterClass
