@@ -3,6 +3,8 @@ import { useEffect, useState } from "preact/hooks";
 export function Destiny2PGCR(props: { pgcrId: string }) {
     const { pgcrId } = props;
 
+    const [loading, setLoading] = useState<boolean>(true);
+
     const [pgcrData, setPgcrData] = useState<any>(null);
     const [pgcrPeriod, setPgcrPeriod] = useState<any>(null);
     const [pgcrActivity, setPgcrActivity] = useState<any>(null);
@@ -25,10 +27,21 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
             setPgcrData(data);
 
             await fetchPGCRData(data);
+            setLoading(false);
         }
 
         fetchPGCR();
     }, []);
+
+    useEffect(() => {
+        if (!loading && window.location.hash) {
+            const hash = window.location.hash.replace("#", "");
+            const element = document.getElementById(hash);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }, [loading, window.location.hash]);
 
     async function fetchPGCRData(pgcr: any) {
         if (pgcr != null) {
@@ -116,6 +129,9 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                     class="w-16 h-16 bg-cover bg-no-repeat"
                                     style={
                                         pgcrActivityMode &&
+                                        pgcrActivityMode.Response &&
+                                        pgcrActivityMode.Response
+                                            .displayProperties &&
                                         `background-image: url(https://www.bungie.net${pgcrActivityMode.Response.displayProperties.icon});`
                                     }
                                 ></div>
@@ -179,7 +195,10 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                             key={index}
                                             class="bg-gray-900 text-white p-2 rounded mt-2 mb-2 flex flex-col items-start"
                                         >
-                                            <div class="text-2xl font-bold">
+                                            <div
+                                                class="text-2xl font-bold"
+                                                id={`${player.destinyUserInfo.membershipId}`}
+                                            >
                                                 {
                                                     player.destinyUserInfo
                                                         .bungieGlobalDisplayName
