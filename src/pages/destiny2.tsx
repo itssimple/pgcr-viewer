@@ -7,6 +7,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
 
     const [pgcrData, setPgcrData] = useState<any>(null);
     const [pgcrPeriod, setPgcrPeriod] = useState<any>(null);
+    const [pgcrTeam, setPcgrTeam] = useState<any>(null);
     const [pgcrActivity, setPgcrActivity] = useState<any>(null);
     const [pgcrActivityType, setPgcrActivityType] = useState<any>(null);
     const [pgcrActivityMode, setPgcrActivityMode] = useState<any>(null);
@@ -48,6 +49,11 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
             const data = pgcr.Response;
 
             setPgcrPeriod(data.period);
+
+            if (data.teams && data.teams.length > 0) {
+                console.log("Teams found:", data.teams);
+                setPcgrTeam(data.teams);
+            }
 
             if (data.activityDetails) {
                 const activityDetails = data.activityDetails;
@@ -99,10 +105,6 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
 
                 const activityModeData = await activityModeResp.json();
                 setPgcrActivityMode(activityModeData);
-            }
-
-            if (data.teams && data.teams.length > 0) {
-                console.log(data.teams);
             }
         }
     }
@@ -185,6 +187,69 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                     </div>
                     {pgcrData && pgcrData.Response.entries && (
                         <div>
+                            {pgcrTeam && pgcrTeam.length > 0 && (
+                                <div class="bg-gray-800 text-white p-4 rounded mt-2 mb-2">
+                                    <h2 class="text-2xl font-bold mb-2">
+                                        Teams (WIP)
+                                    </h2>
+                                    <table class="table-auto w-full">
+                                        <thead class="text-xs text-gray-400 uppercase bg-gray-700">
+                                            <tr>
+                                                <th class="text-left px-6 py-3">
+                                                    Team
+                                                </th>
+                                                <th
+                                                    class="text-right
+                                                        px-6 py-3"
+                                                >
+                                                    Score
+                                                </th>
+                                                <th
+                                                    class="text-right
+                                                            px-6 py-3"
+                                                >
+                                                    Standing
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {pgcrTeam.map(
+                                                (team: any, index: number) => {
+                                                    return (
+                                                        <tr
+                                                            key={index}
+                                                            class="odd:bg-gray-900 even:bg-gray-800"
+                                                        >
+                                                            <td class="text-left px-6 py-3">
+                                                                {team.teamName ||
+                                                                    `Team ${
+                                                                        index +
+                                                                        1
+                                                                    }`}
+                                                            </td>
+                                                            <td class="text-right px-6 py-3">
+                                                                {
+                                                                    team.score
+                                                                        .basic
+                                                                        .displayValue
+                                                                }
+                                                            </td>
+                                                            <td class="text-right px-6 py-3">
+                                                                {
+                                                                    team
+                                                                        .standing
+                                                                        .basic
+                                                                        .displayValue
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                }
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
                             {pgcrData.Response.entries.map(
                                 (entry: any, index: number) => {
                                     const player = entry.player;
