@@ -76,6 +76,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
 
                 const activityData = await activityResp.json();
 
+                activityData.latestVersion = activityData.data;
+
                 const activityDataHistory = activityData.history;
                 if (activityDataHistory && activityDataHistory.length > 0) {
                     let closestVersion = activityDataHistory[0];
@@ -108,6 +110,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                 );
 
                 const activityTypeData = await activityTypeResp.json();
+
+                activityTypeData.latestVersion = activityTypeData.data;
 
                 const activityTypeDataHistory = activityTypeData.history;
                 if (
@@ -154,6 +158,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
 
                 if (activityModeResp.status !== 404) {
                     const activityModeData = await activityModeResp.json();
+
+                    activityModeData.latestVersion = activityModeData.data;
 
                     const activityModeDataHistory = activityModeData.history;
                     if (
