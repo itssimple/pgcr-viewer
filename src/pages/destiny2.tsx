@@ -156,10 +156,10 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                             closestVersion = version;
                         }
                     }
-                    activityModeDataHistory.data = JSON.parse(
+                    activityModeData.data = JSON.parse(
                         closestVersion.JSONContent
                     );
-                    activityModeDataHistory.selectedVersion = closestVersion;
+                    activityModeData.selectedVersion = closestVersion;
                 }
 
                 setPgcrActivityMode(activityModeData);
