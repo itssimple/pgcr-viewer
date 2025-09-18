@@ -90,6 +90,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                     activityData.selectedVersion = closestVersion;
                 }
 
+                console.log("Activity Data:", activityData);
+
                 setPgcrActivity(activityData);
 
                 const activityTypeResp = await fetch(
@@ -126,6 +128,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                     activityTypeData.selectedVersion = closestVersion;
                 }
 
+                console.log("Activity Type Data:", activityTypeData);
+
                 setPgcrActivityType(activityTypeData);
 
                 const activityModeResp = await fetch(
@@ -141,32 +145,32 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                     }
                 );
 
-                const activityModeData = await activityModeResp.json();
+                if (activityModeResp.status !== 404) {
+                    const activityModeData = await activityModeResp.json();
 
-                const activityModeDataHistory = activityModeData.history;
-                if (
-                    activityModeDataHistory &&
-                    activityModeDataHistory.length > 0
-                ) {
-                    let closestVersion = activityModeDataHistory[0];
-                    for (const version of activityModeDataHistory) {
-                        const versionDate = new Date(version.DiscoveredUTC);
+                    const activityModeDataHistory = activityModeData.history;
+                    if (
+                        activityModeDataHistory &&
+                        activityModeDataHistory.length > 0
+                    ) {
+                        let closestVersion = activityModeDataHistory[0];
+                        for (const version of activityModeDataHistory) {
+                            const versionDate = new Date(version.DiscoveredUTC);
 
-                        if (versionDate <= pgcrDate) {
-                            closestVersion = version;
+                            if (versionDate <= pgcrDate) {
+                                closestVersion = version;
+                            }
                         }
+                        activityModeData.data = JSON.parse(
+                            closestVersion.JSONContent
+                        );
+                        activityModeData.selectedVersion = closestVersion;
                     }
-                    activityModeData.data = JSON.parse(
-                        closestVersion.JSONContent
-                    );
-                    activityModeData.selectedVersion = closestVersion;
+
+                    console.log("Activity Mode Data:", activityModeData);
+
+                    setPgcrActivityMode(activityModeData);
                 }
-
-                setPgcrActivityMode(activityModeData);
-
-                console.log("Activity Data:", activityData);
-                console.log("Activity Type Data:", activityTypeData);
-                console.log("Activity Mode Data:", activityModeData);
             }
         }
     }
