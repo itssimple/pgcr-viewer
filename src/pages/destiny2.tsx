@@ -58,7 +58,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
             if (data.activityDetails) {
                 const activityDetails = data.activityDetails;
 
-                const pgcrDate = new Date(pgcrPeriod);
+                const pgcrDate = new Date(data.period);
                 console.log("PGCR Date:", pgcrDate);
 
                 const activityResp = await fetch(
@@ -132,10 +132,17 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
 
                 setPgcrActivityType(activityTypeData);
 
+                let activityModeHash = activityData.data.activityTypeHash;
+
+                if (
+                    activityData.data.activityModeHashes &&
+                    activityData.data.activityModeHashes.length > 0
+                ) {
+                    activityModeHash = activityData.data.activityModeHashes[0];
+                }
+
                 const activityModeResp = await fetch(
-                    `https://manifest.report/definition/ActivityMode/${
-                        activityData.data.activityTypeHash
-                    }/?includeHistory=true&_cache=${new Date().getTime()}`,
+                    `https://manifest.report/definition/ActivityMode/${activityModeHash}/?includeHistory=true&_cache=${new Date().getTime()}`,
                     {
                         method: "GET",
                         headers: {
