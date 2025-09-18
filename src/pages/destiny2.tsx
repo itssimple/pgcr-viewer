@@ -195,7 +195,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                             class="top-0 left-0 right-0 bottom-0 bg-cover bg-no-repeat absolute max-h[none]"
                             style={
                                 pgcrActivity &&
-                                `background-image: url(https://www.bungie.net${pgcrActivity.data.pgcrImage});`
+                                `background-image: url(https://storage.manifest.report/manifest-archive/images${pgcrActivity.data.pgcrImage});`
                             }
                         ></div>
                         <div class="relative bg-linear-to-tr from-black/90 to-black/0 text-left p-5 w-full pt-25">
@@ -207,7 +207,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                         pgcrActivityMode.data &&
                                         pgcrActivityMode.data
                                             .displayProperties &&
-                                        `background-image: url(https://www.bungie.net${pgcrActivityMode.data.displayProperties.icon});`
+                                        `background-image: url(https://storage.manifest.report/manifest-archive/images${pgcrActivityMode.data.displayProperties.icon});`
                                     }
                                 ></div>
                             </div>
