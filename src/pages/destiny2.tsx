@@ -58,10 +58,13 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
             if (data.activityDetails) {
                 const activityDetails = data.activityDetails;
 
+                const pgcrDate = new Date(pgcrPeriod);
+                console.log("PGCR Date:", pgcrDate);
+
                 const activityResp = await fetch(
-                    `https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${
+                    `https://manifest.report/definition/Activity/${
                         activityDetails.referenceId
-                    }/?_cache=${new Date().getTime()}`,
+                    }/?includeHistory=true&_cache=${new Date().getTime()}`,
                     {
                         method: "GET",
                         headers: {
@@ -72,12 +75,26 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                 );
 
                 const activityData = await activityResp.json();
+
+                const activityDataHistory = activityData.history;
+                if (activityDataHistory && activityDataHistory.length > 0) {
+                    let closestVersion = activityDataHistory[0];
+                    for (const version of activityDataHistory) {
+                        const versionDate = new Date(version.DiscoveredUTC);
+
+                        if (versionDate <= pgcrDate) {
+                            closestVersion = version;
+                        }
+                    }
+                    activityData.data = JSON.parse(closestVersion.JSONContent);
+                }
+
                 setPgcrActivity(activityData);
 
                 const activityTypeResp = await fetch(
-                    `https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityTypeDefinition/${
-                        activityData.Response.activityTypeHash
-                    }/?_cache=${new Date().getTime()}`,
+                    `https://manifest.report/definition/ActivityType/${
+                        activityData.data.activityTypeHash
+                    }/?includeHistory=true&_cache=${new Date().getTime()}`,
                     {
                         method: "GET",
                         headers: {
@@ -88,12 +105,31 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                 );
 
                 const activityTypeData = await activityTypeResp.json();
+
+                const activityTypeDataHistory = activityTypeData.history;
+                if (
+                    activityTypeDataHistory &&
+                    activityTypeDataHistory.length > 0
+                ) {
+                    let closestVersion = activityTypeDataHistory[0];
+                    for (const version of activityTypeDataHistory) {
+                        const versionDate = new Date(version.DiscoveredUTC);
+
+                        if (versionDate <= pgcrDate) {
+                            closestVersion = version;
+                        }
+                    }
+                    activityTypeData.data = JSON.parse(
+                        closestVersion.JSONContent
+                    );
+                }
+
                 setPgcrActivityType(activityTypeData);
 
                 const activityModeResp = await fetch(
-                    `https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityModeDefinition/${
-                        activityData.Response.activityTypeHash
-                    }/?_cache=${new Date().getTime()}`,
+                    `https://manifest.report/definition/ActivityMode/${
+                        activityData.data.activityTypeHash
+                    }/?includeHistory=true&_cache=${new Date().getTime()}`,
                     {
                         method: "GET",
                         headers: {
@@ -104,7 +140,30 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                 );
 
                 const activityModeData = await activityModeResp.json();
+
+                const activityModeDataHistory = activityModeData.history;
+                if (
+                    activityModeDataHistory &&
+                    activityModeDataHistory.length > 0
+                ) {
+                    let closestVersion = activityModeDataHistory[0];
+                    for (const version of activityModeDataHistory) {
+                        const versionDate = new Date(version.DiscoveredUTC);
+
+                        if (versionDate <= pgcrDate) {
+                            closestVersion = version;
+                        }
+                    }
+                    activityTypeData.data = JSON.parse(
+                        closestVersion.JSONContent
+                    );
+                }
+
                 setPgcrActivityMode(activityModeData);
+
+                console.log("Activity Data:", activityData);
+                console.log("Activity Type Data:", activityTypeData);
+                console.log("Activity Mode Data:", activityModeData);
             }
         }
     }
@@ -122,7 +181,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                             class="top-0 left-0 right-0 bottom-0 bg-cover bg-no-repeat absolute max-h[none]"
                             style={
                                 pgcrActivity &&
-                                `background-image: url(https://www.bungie.net${pgcrActivity.Response.pgcrImage});`
+                                `background-image: url(https://www.bungie.net${pgcrActivity.data.pgcrImage});`
                             }
                         ></div>
                         <div class="relative bg-linear-to-tr from-black/90 to-black/0 text-left p-5 w-full pt-25">
@@ -131,10 +190,10 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                     class="w-16 h-16 bg-cover bg-no-repeat"
                                     style={
                                         pgcrActivityMode &&
-                                        pgcrActivityMode.Response &&
-                                        pgcrActivityMode.Response
+                                        pgcrActivityMode.data &&
+                                        pgcrActivityMode.data
                                             .displayProperties &&
-                                        `background-image: url(https://www.bungie.net${pgcrActivityMode.Response.displayProperties.icon});`
+                                        `background-image: url(https://www.bungie.net${pgcrActivityMode.data.displayProperties.icon});`
                                     }
                                 ></div>
                             </div>
@@ -142,7 +201,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                 {pgcrActivityType && (
                                     <>
                                         {
-                                            pgcrActivityType.Response
+                                            pgcrActivityType.data
                                                 .displayProperties.name
                                         }
                                     </>
@@ -152,8 +211,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                 {pgcrActivity && (
                                     <>
                                         {
-                                            pgcrActivity.Response
-                                                .displayProperties.name
+                                            pgcrActivity.data.displayProperties
+                                                .name
                                         }
                                     </>
                                 )}
@@ -162,8 +221,8 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                 {pgcrActivity && (
                                     <>
                                         {
-                                            pgcrActivity.Response
-                                                .displayProperties.description
+                                            pgcrActivity.data.displayProperties
+                                                .description
                                         }
                                     </>
                                 )}
