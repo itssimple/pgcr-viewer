@@ -87,6 +87,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                         }
                     }
                     activityData.data = JSON.parse(closestVersion.JSONContent);
+                    activityData.selectedVersion = closestVersion;
                 }
 
                 setPgcrActivity(activityData);
@@ -122,6 +123,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                     activityTypeData.data = JSON.parse(
                         closestVersion.JSONContent
                     );
+                    activityTypeData.selectedVersion = closestVersion;
                 }
 
                 setPgcrActivityType(activityTypeData);
@@ -154,9 +156,10 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                             closestVersion = version;
                         }
                     }
-                    activityTypeData.data = JSON.parse(
+                    activityModeDataHistory.data = JSON.parse(
                         closestVersion.JSONContent
                     );
+                    activityModeDataHistory.selectedVersion = closestVersion;
                 }
 
                 setPgcrActivityMode(activityModeData);
