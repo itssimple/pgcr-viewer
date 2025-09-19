@@ -1,4 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
+import { DestinyActivityModeType } from "../classes/bungieEnums";
 
 export function Destiny2PGCR(props: { pgcrId: string }) {
     const { pgcrId } = props;
@@ -8,6 +9,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
     const [pgcrData, setPgcrData] = useState<any>(null);
     const [pgcrPeriod, setPgcrPeriod] = useState<any>(null);
     const [pgcrTeam, setPcgrTeam] = useState<any>(null);
+    const [pgcrDirectorActivity, setPgcrDirectorActivity] = useState<any>(null);
     const [pgcrActivity, setPgcrActivity] = useState<any>(null);
     const [pgcrActivityType, setPgcrActivityType] = useState<any>(null);
     const [pgcrActivityMode, setPgcrActivityMode] = useState<any>(null);
@@ -61,10 +63,49 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                 const pgcrDate = new Date(data.period);
                 console.log("PGCR Date:", pgcrDate);
 
+                console.log("PGCR Data:", data);
+
+                const directorActivityResp = await fetch(
+                    `https://manifest.report/definition/Activity/${activityDetails.directorActivityHash}/?includeHistory=true`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "X-API-Key": import.meta.env.VITE_BUNGIE_API_KEY,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                const directorActivityData = await directorActivityResp.json();
+
+                directorActivityData.latestVersion = directorActivityData.data;
+
+                const directorActivityDataHistory =
+                    directorActivityData.history;
+                if (
+                    directorActivityDataHistory &&
+                    directorActivityDataHistory.length > 0
+                ) {
+                    let closestVersion = directorActivityDataHistory[0];
+                    for (const version of directorActivityDataHistory) {
+                        const versionDate = new Date(version.DiscoveredUTC);
+
+                        if (versionDate <= pgcrDate) {
+                            closestVersion = version;
+                        }
+                    }
+                    directorActivityData.data = JSON.parse(
+                        closestVersion.JSONContent
+                    );
+                    directorActivityData.selectedVersion = closestVersion;
+                }
+
+                console.log("Director Activity Data:", directorActivityData);
+
+                setPgcrDirectorActivity(directorActivityData);
+
                 const activityResp = await fetch(
-                    `https://manifest.report/definition/Activity/${
-                        activityDetails.referenceId
-                    }/?includeHistory=true&_cache=${new Date().getTime()}`,
+                    `https://manifest.report/definition/Activity/${activityDetails.referenceId}/?includeHistory=true`,
                     {
                         method: "GET",
                         headers: {
@@ -97,9 +138,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                 setPgcrActivity(activityData);
 
                 const activityTypeResp = await fetch(
-                    `https://manifest.report/definition/ActivityType/${
-                        activityData.data.activityTypeHash
-                    }/?includeHistory=true&_cache=${new Date().getTime()}`,
+                    `https://manifest.report/definition/ActivityType/${activityData.data.activityTypeHash}/?includeHistory=true`,
                     {
                         method: "GET",
                         headers: {
@@ -126,6 +165,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                             closestVersion = version;
                         }
                     }
+
                     activityTypeData.data = JSON.parse(
                         closestVersion.JSONContent
                     );
@@ -146,7 +186,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                 }
 
                 const activityModeResp = await fetch(
-                    `https://manifest.report/definition/ActivityMode/${activityModeHash}/?includeHistory=true&_cache=${new Date().getTime()}`,
+                    `https://manifest.report/definition/ActivityMode/${activityModeHash}/?includeHistory=true`,
                     {
                         method: "GET",
                         headers: {
@@ -174,6 +214,7 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                 closestVersion = version;
                             }
                         }
+                        console.log("Closest Version:", closestVersion);
                         activityModeData.data = JSON.parse(
                             closestVersion.JSONContent
                         );
@@ -226,6 +267,19 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                         }
                                     </>
                                 )}
+                                {DestinyActivityModeType[
+                                    pgcrData.Response.activityDetails.mode
+                                ] && (
+                                    <>
+                                        {" - "}
+                                        {
+                                            DestinyActivityModeType[
+                                                pgcrData.Response
+                                                    .activityDetails.mode
+                                            ]
+                                        }
+                                    </>
+                                )}
                             </div>
                             <div class="text-3xl mt-2">
                                 {pgcrActivity && (
@@ -243,6 +297,26 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                         {
                                             pgcrActivity.data.displayProperties
                                                 .description
+                                        }
+                                    </>
+                                )}
+                            </em>
+                            <div class="text-3xl">
+                                {pgcrDirectorActivity && (
+                                    <>
+                                        {
+                                            pgcrDirectorActivity.data
+                                                .displayProperties.name
+                                        }
+                                    </>
+                                )}
+                            </div>
+                            <em>
+                                {pgcrDirectorActivity && (
+                                    <>
+                                        {
+                                            pgcrDirectorActivity.data
+                                                .displayProperties.description
                                         }
                                     </>
                                 )}
