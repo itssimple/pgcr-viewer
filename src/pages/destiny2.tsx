@@ -301,26 +301,38 @@ export function Destiny2PGCR(props: { pgcrId: string }) {
                                     </>
                                 )}
                             </em>
-                            <div class="text-3xl">
-                                {pgcrDirectorActivity && (
+                            {pgcrActivity &&
+                                pgcrDirectorActivity &&
+                                pgcrActivity.data.displayProperties.name !==
+                                    pgcrDirectorActivity.data.displayProperties
+                                        .name && (
                                     <>
-                                        {
-                                            pgcrDirectorActivity.data
-                                                .displayProperties.name
-                                        }
+                                        <div class="text-3xl">
+                                            {pgcrDirectorActivity && (
+                                                <>
+                                                    {
+                                                        pgcrDirectorActivity
+                                                            .data
+                                                            .displayProperties
+                                                            .name
+                                                    }
+                                                </>
+                                            )}
+                                        </div>
+                                        <em>
+                                            {pgcrDirectorActivity && (
+                                                <>
+                                                    {
+                                                        pgcrDirectorActivity
+                                                            .data
+                                                            .displayProperties
+                                                            .description
+                                                    }
+                                                </>
+                                            )}
+                                        </em>
                                     </>
                                 )}
-                            </div>
-                            <em>
-                                {pgcrDirectorActivity && (
-                                    <>
-                                        {
-                                            pgcrDirectorActivity.data
-                                                .displayProperties.description
-                                        }
-                                    </>
-                                )}
-                            </em>
                             {pgcrPeriod && (
                                 <p>
                                     {new Date(pgcrPeriod).toLocaleDateString(
