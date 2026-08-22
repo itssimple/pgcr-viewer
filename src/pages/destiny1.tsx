@@ -181,7 +181,7 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                                                 )}
                                                 , lvl. {player.characterLevel},
                                                 light lvl. {player.lightLevel}){" "}
-                                                <small>
+                                                {playerData.values && playerData.values.activityDurationSeconds? <small>
                                                     <em>
                                                         duration:{" "}
                                                         {
@@ -191,7 +191,7 @@ export function Destiny1PGCR(props: { pgcrId: string }) {
                                                                 .displayValue
                                                         }
                                                     </em>
-                                                </small>
+                                                </small> : null}
                                             </div>
                                             <table class="table-auto w-full mt-2 mb-2">
                                                 <thead class="text-xs text-gray-400 uppercase bg-gray-700">
